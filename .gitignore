@@ -1,3 +1,20 @@
+# downloaded installers
 *.deb
+*.run
+*.AppImage
+
+# editor cruft
 *.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# OS detritus
 .DS_Store
+Thumbs.db
+
+# logs / scratch
+*.log
+tmp/
+scratch/
