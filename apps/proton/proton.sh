@@ -1,7 +1,7 @@
 # apps/proton/proton.sh — Proton suite
 # Note: Proton Drive has no official Linux client as of writing — excluded.
 
-PROTON_IDS=(protonvpn protonbridge protonpass)
+PROTON_IDS=(protonvpn protonmail protonbridge protonpass)
 
 PROTON_BRIDGE_VERSION="${PROTON_BRIDGE_VERSION:-3.13.0-1}"
 
@@ -14,6 +14,21 @@ install_protonvpn() {
         "https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.3-3_all.deb" \
         || return 1
     install_apt "ProtonVPN" proton-vpn-gnome-desktop
+}
+
+APP_protonmail_NAME="Proton Mail Desktop"
+APP_protonmail_DESC="Native Proton Mail desktop app for Linux."
+APP_protonmail_PROFILES=("privacy")
+APP_protonmail_DEFAULT_IN=("privacy")
+install_protonmail() {
+    # Proton ships this as a direct .deb whose URL contains the current
+    # version — pinning it here would 404 within weeks. Manual install
+    # points the user at the canonical download page.
+    manual_install "Proton Mail Desktop" \
+        "https://proton.me/mail/download" \
+        "Proton Mail Desktop is distributed as a versioned .deb from proton.me.
+After download:
+  sudo apt install ./ProtonMail-desktop-*.deb"
 }
 
 APP_protonbridge_NAME="Proton Mail Bridge"

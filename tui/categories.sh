@@ -13,10 +13,24 @@ _section() {
     clear
     gum_header "$title"
 
-    # Build pretty labels & a parallel id list (gum returns labels back to us)
-    local labels=() defaults=()
-    local id name desc score label
+    # Filter the catalog to apps whose PROFILES intersect with the user's
+    # selected profiles, then build labels in catalog order. This is what
+    # drops e.g. Discord from messengers and the whole Gaming section when
+    # only 'privacy' is chosen.
+    local filtered_ids=()
+    local id
     for id in "${ids[@]}"; do
+        app_matches_selected_profiles "$id" && filtered_ids+=("$id")
+    done
+
+    if (( ${#filtered_ids[@]} == 0 )); then
+        # Whole category is irrelevant for the current profile mix — skip it.
+        return 0
+    fi
+
+    local labels=() defaults=()
+    local name desc score label
+    for id in "${filtered_ids[@]}"; do
         name="APP_${id}_NAME";   name="${!name}"
         desc="APP_${id}_DESC";   desc="${!desc}"
         local score_var="APP_${id}_SCORE"
@@ -53,12 +67,13 @@ _section() {
             -- "${labels[@]}"
     )
 
-    # Map chosen labels back to ids and append uniquely
+    # Map chosen labels back to ids (using filtered_ids since labels[] was
+    # built from that) and append uniquely.
     local c i
     for c in "${chosen[@]}"; do
         for ((i=0; i<${#labels[@]}; i++)); do
             if [[ "${labels[$i]}" == "$c" ]]; then
-                _add_to_install "${ids[$i]}"
+                _add_to_install "${filtered_ids[$i]}"
                 break
             fi
         done

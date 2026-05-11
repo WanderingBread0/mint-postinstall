@@ -53,6 +53,21 @@ profile_active() {
     return 1
 }
 
+# app_matches_selected_profiles app_id  -> 0 if the app's PROFILES list
+# intersects with SELECTED_PROFILES. Used by categories.sh to hide e.g.
+# gaming apps when only 'privacy' is selected.
+app_matches_selected_profiles() {
+    local id="$1"
+    local arr_name="APP_${id}_PROFILES[@]"
+    local prof p
+    for prof in "${!arr_name}"; do
+        for p in "${SELECTED_PROFILES[@]}"; do
+            [[ "$prof" == "$p" ]] && return 0
+        done
+    done
+    return 1
+}
+
 # app_is_default_for_selected_profiles app_id  -> 0 if YES
 app_is_default_for_selected_profiles() {
     local id="$1"

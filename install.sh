@@ -50,8 +50,23 @@ for f in "$SCRIPT_DIR"/apps/*/*.sh; do
     source "$f"
 done
 
+# Flatten every category's *_IDS array into a single canonical list. Used by
+# the extras screen and the mode picker. Lives here (not in a tui file) so
+# tui sourcing order doesn't matter.
+ALL_IDS=(
+    "${BROWSERS_IDS[@]}"
+    "${PROTON_IDS[@]}"
+    "${MESSENGERS_IDS[@]}"
+    "${NOTES_IDS[@]}"
+    "${GAMING_IDS[@]}"
+    "${TERMINAL_IDS[@]}"
+    "${UTILITIES_IDS[@]}"
+    "${DEV_IDS[@]}"
+    "${MEDIA_IDS[@]}"
+)
+
 # ── source TUI screens ───────────────────────────────────────────
-for f in welcome profiles categories extras summary execute done; do
+for f in welcome profiles mode categories extras summary execute done; do
     # shellcheck source=/dev/null
     source "$SCRIPT_DIR/tui/$f.sh"
 done
@@ -72,8 +87,22 @@ ensure_flathub || true
 # ── run the flow ─────────────────────────────────────────────────
 screen_welcome
 screen_profiles
-screen_categories
-screen_extras
+screen_mode
+
+case "$INSTALL_MODE" in
+    defaults)
+        seed_from_defaults
+        ;;
+    customize)
+        screen_categories
+        screen_extras
+        ;;
+    full)
+        seed_from_defaults
+        screen_extras
+        ;;
+esac
+
 screen_summary
 screen_execute
 

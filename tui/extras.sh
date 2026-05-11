@@ -4,17 +4,7 @@
 # scratch. It opens the entire catalog with the current selections pre-checked,
 # preserves selection order, and detects pairwise conflicts before returning.
 
-ALL_IDS=(
-    "${BROWSERS_IDS[@]}"
-    "${PROTON_IDS[@]}"
-    "${MESSENGERS_IDS[@]}"
-    "${NOTES_IDS[@]}"
-    "${GAMING_IDS[@]}"
-    "${TERMINAL_IDS[@]}"
-    "${UTILITIES_IDS[@]}"
-    "${DEV_IDS[@]}"
-    "${MEDIA_IDS[@]}"
-)
+# ALL_IDS is defined in install.sh after the apps/* files are sourced.
 
 # Pairs of apps where having both queued is probably a mistake.
 CONFLICT_PAIRS=(
