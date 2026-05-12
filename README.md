@@ -42,7 +42,7 @@ Profiles are additive — selecting `privacy` + `dev` gives you the union of bot
 
 ## Catalog
 
-See [`apps/`](apps/) for full definitions. Categories: browsers, proton, messengers, notes, gaming, terminal, utilities, dev, media.
+See [`apps/`](apps/) for full definitions. Categories: browsers, proton, email, messengers, notes, gaming, terminal, utilities, dev, media.
 
 Each app file declares metadata (`NAME`, `DESC`, `PROFILES`, `DEFAULT_IN`, optional `SCORE` privacy bar) and an `install_<id>` function.
 

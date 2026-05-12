@@ -107,6 +107,7 @@ _install_contains() {
 screen_categories() {
     _section "Browsers"          BROWSERS_IDS
     _section "Proton Suite"      PROTON_IDS
+    _section "Email"             EMAIL_IDS
     _section "Messengers"        MESSENGERS_IDS
     _section "Notes"             NOTES_IDS
     _section "Gaming"            GAMING_IDS

@@ -56,6 +56,7 @@ done
 ALL_IDS=(
     "${BROWSERS_IDS[@]}"
     "${PROTON_IDS[@]}"
+    "${EMAIL_IDS[@]}"
     "${MESSENGERS_IDS[@]}"
     "${NOTES_IDS[@]}"
     "${GAMING_IDS[@]}"
