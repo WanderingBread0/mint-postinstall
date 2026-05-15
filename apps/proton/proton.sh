@@ -10,9 +10,16 @@ APP_protonvpn_DESC="Proton's official Linux VPN GUI."
 APP_protonvpn_PROFILES=("privacy")
 APP_protonvpn_DEFAULT_IN=("privacy")
 install_protonvpn() {
+    # Two-step install: the release .deb just drops repo + key files;
+    # apt's cache doesn't know about the new proton repo yet, so we have
+    # to apt-update before pulling the actual package.
     install_deb_url "ProtonVPN release package" \
         "https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.3-3_all.deb" \
         || return 1
+    if ! $DRY_RUN; then
+        _spin "apt update for ProtonVPN" "sudo apt-get update -qq" \
+            || { _record_fail "ProtonVPN"; return 1; }
+    fi
     install_apt "ProtonVPN" proton-vpn-gnome-desktop
 }
 

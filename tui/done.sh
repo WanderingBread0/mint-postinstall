@@ -5,10 +5,15 @@ screen_done() {
     gum_header "All done"
 
     local lines=()
+    local x
     if (( ${#INSTALL_OK[@]} > 0 )); then
         lines+=("$(gum style --foreground 82 --bold "${#INSTALL_OK[@]} installed:")")
-        local x
         for x in "${INSTALL_OK[@]}"; do lines+=("  ✓ $x"); done
+        lines+=("")
+    fi
+    if (( ${#INSTALL_MANUAL[@]} > 0 )); then
+        lines+=("$(gum style --foreground 39 --bold "${#INSTALL_MANUAL[@]} manual (browser opened — finish in GUI):")")
+        for x in "${INSTALL_MANUAL[@]}"; do lines+=("  ⇲ $x"); done
         lines+=("")
     fi
     if (( ${#INSTALL_SKIPPED[@]} > 0 )); then

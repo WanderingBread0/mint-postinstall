@@ -5,10 +5,12 @@
 INSTALL_FAILED=()
 INSTALL_OK=()
 INSTALL_SKIPPED=()
+INSTALL_MANUAL=()
 
 _record_ok()      { INSTALL_OK+=("$1");      log_success "$1 installed"; }
 _record_skip()    { INSTALL_SKIPPED+=("$1"); log_skip    "$1 skipped (already present)"; }
 _record_fail()    { INSTALL_FAILED+=("$1");  log_error   "$1 failed"; }
+_record_manual()  { INSTALL_MANUAL+=("$1");  log_info    "$1 — manual step required"; }
 _record_dryrun()  { INSTALL_SKIPPED+=("$1"); log_skip    "[dry-run] would install $1"; }
 
 # --- helpers -----------------------------------------------------------------
@@ -95,11 +97,13 @@ install_repo() {
 
     sudo install -d -m 0755 "$(dirname "$key_path")"
 
-    if [[ ! -s "$key_path" ]]; then
-        _spin "fetching $name key" \
-            "curl -fsSL '$key_url' | sudo gpg --dearmor -o '$key_path'" \
-            || { _record_fail "$name"; return 1; }
-    fi
+    # Always (re)write the keyring through `sudo tee` and chmod 0644.
+    # `sudo gpg --dearmor -o /path` would create the file mode 0600, which
+    # apt's signed-by mechanism rejects (the _apt user can't read it).
+    # That silently breaks Signal, Vivaldi, VS Code, and Opera GX repos.
+    _spin "fetching $name key" \
+        "curl -fsSL '$key_url' | gpg --dearmor | sudo tee '$key_path' >/dev/null && sudo chmod 0644 '$key_path'" \
+        || { _record_fail "$name"; return 1; }
 
     echo "$repo_line" | sudo tee "$repo_file" >/dev/null
     _spin "apt update for $name" "sudo apt-get update -qq" \
@@ -143,7 +147,7 @@ manual_install() {
     fi
     if $DRY_RUN; then _record_dryrun "$name (manual)"; return 0; fi
     command -v xdg-open >/dev/null 2>&1 && xdg-open "$url" >/dev/null 2>&1 &
-    INSTALL_SKIPPED+=("$name (manual)")
+    _record_manual "$name"
 }
 
 # ensure_flathub — once per run, sets up flatpak + flathub remote
